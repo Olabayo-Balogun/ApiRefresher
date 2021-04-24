@@ -1,8 +1,9 @@
 ﻿//The using statement below must be present when inheriting "ControllerBase" and using "Route" attributes.
 
 //It's important to remember this especially if you decide to use other code editor like VS Code for building APIs rather than an IDE like Visual Studio
+using CoreCodeCamp.Data;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Threading.Tasks;
 
 namespace CoreCodeCamp.Controllers
 {
@@ -22,6 +23,8 @@ namespace CoreCodeCamp.Controllers
     //We decided to inherit from the class "ControllerBase" rather than "Controller" because the former is more suited to APIs while the latter was built with MVC in mind.
     public class CampsController : ControllerBase
     {
+        private readonly ICampRepository _repository;
+
         //The name of the method is very important in API.
 
         //Because we called this one get, it machine that reads this code will automatically assume this method returns a get request as such it will send all the data in this method straight to the browser/frontend/caller of this API.
@@ -34,17 +37,36 @@ namespace CoreCodeCamp.Controllers
 
         //when the url path specified in a browser matches the controller name (in this case it's "camps") it will return all the values within the controller (that have a return type) under normal circumstances.
 
-        //The IActionResult indicates that this method will perform some operation
+        public CampsController(ICampRepository repository)
+        {
+            _repository = repository;
 
-        //[HttpGet] is an attribute used to specify the action you expect the block of code to perform`
+            //When trying to get an instance of a repository you need to create a constructor for it and pass in the repository name and create a private readonly field for it.
+
+            //Once you've done this you can gain access to the methods and properties of the IRepository in order to perform operations
+
+            //The "_" attached to the name "repository" is a naming convention.
+
+        }
 
         [HttpGet]
-        public IActionResult  Get()
+        public async Task<IActionResult>  Get()
         {
+            //The IActionResult indicates that this method will perform some operation
+
+            //[HttpGet] is an attribute used to specify the action you expect the block of code to perform`
+
             //The "return" statement is what is used to determine was is sent to the caller of this API, it can be used to dictate all the logic and data manipulation you need before the final result is collected.
 
             //What is found within this block of code starting from the HttpGet attribute is the endpoint
 
+            var results = await _repository.GetAllCampsAsync();
+
+            //When using an async properties, your action has to be an an async task of the action result
+
+           // You should also add "await" to the _respository so the async action will work as it should.
+
+            //You can return the result of the variable which now possesses the what you called from the repository
 
             if (false) return this.BadRequest("Bad stuff happens");
 
