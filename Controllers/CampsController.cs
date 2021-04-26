@@ -59,7 +59,14 @@ namespace CoreCodeCamp.Controllers
         //public async Task<IActionResult> Get()
 
         //The above code isn't as preferrable as this one because this one lets you know the type of data it is giving you
-        public async Task<ActionResult<CampModel[]>>  Get()
+
+        //Code
+        //public async Task<ActionResult<CampModel[]>>  Get()
+
+        //The difference between the code above and the one below is that the code below includes query strings that can be used to show extra information that isn't explicitly necessary.
+        //By default the "includeTalks" is set to false so it only shows when the user specifically asks for it.
+
+         public async Task<ActionResult<CampModel[]>> Get(bool includeTalks = false)
         {
             //The IActionResult indicates that this method will perform some operation
 
@@ -83,7 +90,7 @@ namespace CoreCodeCamp.Controllers
 
             try
             {
-                var results = await _repository.GetAllCampsAsync();
+                var results = await _repository.GetAllCampsAsync(includeTalks);
 
                 //Mapping the way it's done below gives you full access to the data in the model involved
                 //It also allows you to manipulate what you get

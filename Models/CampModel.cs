@@ -1,8 +1,5 @@
-﻿using CoreCodeCamp.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreCodeCamp.Models
 {
@@ -28,5 +25,9 @@ namespace CoreCodeCamp.Models
 
         //Note that if you do not like the way the property names look when the API is fetched there are other ways to go about it.
         //Adjust it in the Profile class of the model, the profile class is where you map the entity class to the model class.
+
+        public ICollection<TalkModel> Talks { get; set; }
+
+        //The code above enables us to fetch data from the properties in the TalkModel
     }
 }
