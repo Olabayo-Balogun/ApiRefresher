@@ -211,7 +211,8 @@ namespace CoreCodeCamp.Controllers
             }
         }
 
-        public async Task<ActionResult<CampModel[]>> Post(CampModel model)
+        [HttpPost]
+        public async Task<ActionResult<CampModel>> Post(CampModel model)
         {
             try
             {
@@ -221,15 +222,15 @@ namespace CoreCodeCamp.Controllers
                     return BadRequest("Moniker in use");
                 }
 
-                var location = _linkGenerator.GetPathByAction("Get", "Camps", new { moniker = model.Moniker});
+                var location = _linkGenerator.GetPathByAction("Get", "Camps", new { moniker = model.Moniker });
 
-                if(string.IsNullOrWhiteSpace(location))
+                if (string.IsNullOrWhiteSpace(location))
                 {
                     return BadRequest("Could not use current moniker");
                 }
 
                 //The above code is aimed at creation of a url path to a new camp upon it's creation.
-                
+
 
                 //Creating a new camp
                 var camp = _mapper.Map<Camp>(model);
