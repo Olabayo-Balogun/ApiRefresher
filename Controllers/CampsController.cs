@@ -6,6 +6,9 @@ using CoreCodeCamp.Data;
 using CoreCodeCamp.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CoreCodeCamp.Controllers
@@ -28,6 +31,7 @@ namespace CoreCodeCamp.Controllers
     {
         private readonly ICampRepository _repository;
         private readonly IMapper _mapper;
+        private readonly LinkGenerator _linkGenerator;
 
         //The name of the method is very important in API.
 
@@ -41,10 +45,13 @@ namespace CoreCodeCamp.Controllers
 
         //when the url path specified in a browser matches the controller name (in this case it's "camps") it will return all the values within the controller (that have a return type) under normal circumstances.
 
-        public CampsController(ICampRepository repository, IMapper mapper)
+        public CampsController(ICampRepository repository, IMapper mapper, LinkGenerator linkGenerator)
         {
             _repository = repository;
             _mapper = mapper;
+            _linkGenerator = linkGenerator;
+
+            //LinkGenerator helps in creating automatic links to new objects or items in a database
 
             //When trying to get an instance of a repository you need to create a constructor for it and pass in the repository name and create a private readonly field for it.
 
@@ -68,6 +75,7 @@ namespace CoreCodeCamp.Controllers
 
          public async Task<ActionResult<CampModel[]>> Get(bool includeTalks = false)
         {
+
             //The IActionResult indicates that this method will perform some operation
 
             //[HttpGet] is an attribute used to specify the action you expect the block of code to perform`
@@ -108,7 +116,7 @@ namespace CoreCodeCamp.Controllers
                 //The code below is more efficient and neater than the code above and for more use cases it will suffice.
                 return _mapper.Map<CampModel[]>(results);
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure" );
             }
@@ -154,7 +162,7 @@ namespace CoreCodeCamp.Controllers
 
                 //All the code in this block is similar to the above code, only it's mean't to return a single result. 
             }
-            catch (System.Exception)
+            catch (Exception)
             {
 
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
@@ -184,5 +192,63 @@ namespace CoreCodeCamp.Controllers
         //    }
 
         //}
+
+        [HttpGet("search")]
+        public async Task<ActionResult<CampModel[]>> SearchByDate(DateTime theDate, bool includeTalks = false)
+        {
+            try
+            {
+                var results = await _repository.GetAllCampsByEventDate(theDate, includeTalks);
+
+                if (!results.Any()) return NotFound();
+
+                return _mapper.Map<CampModel[]>(results);
+            }
+            catch (Exception)
+            {
+
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+        }
+
+        public async Task<ActionResult<CampModel[]>> Post(CampModel model)
+        {
+            try
+            {
+                var campNameExists = await _repository.GetCampAsync(model.Moniker);
+                if (campNameExists != null)
+                {
+                    return BadRequest("Moniker in use");
+                }
+
+                var location = _linkGenerator.GetPathByAction("Get", "Camps", new { moniker = model.Moniker});
+
+                if(string.IsNullOrWhiteSpace(location))
+                {
+                    return BadRequest("Could not use current moniker");
+                }
+
+                //The above code is aimed at creation of a url path to a new camp upon it's creation.
+                
+
+                //Creating a new camp
+                var camp = _mapper.Map<Camp>(model);
+                _repository.Add(camp);
+                if(await _repository.SaveChangesAsync())
+                {
+                    return Created($"/api/camps/{camp.Moniker}", _mapper.Map<CampModel>(camp));
+                    //The above return statement declares the path and populates the database by maping to the Model class 
+                }
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+
+            return BadRequest();
+        }
     }
 }
