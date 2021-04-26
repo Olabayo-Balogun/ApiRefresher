@@ -55,7 +55,11 @@ namespace CoreCodeCamp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult>  Get()
+        //Code
+        //public async Task<IActionResult> Get()
+
+        //The above code isn't as preferrable as this one because this one lets you know the type of data it is giving you
+        public async Task<ActionResult<CampModel[]>>  Get()
         {
             //The IActionResult indicates that this method will perform some operation
 
@@ -83,8 +87,19 @@ namespace CoreCodeCamp.Controllers
 
                 //Mapping the way it's done below gives you full access to the data in the model involved
                 //It also allows you to manipulate what you get
-                CampModel[] models = _mapper.Map<CampModel[]>(results);
-                return Ok(models);
+
+                //Code
+                //CampModel[] models = _mapper.Map<CampModel[]>(results);
+
+                //Code
+                //return Ok (models);
+
+                //The code above isn't as neat as the code below especially when you've switched IActionResult to ActionResult and you've specified the type of data you're returning
+                //The code above and the code below do the same thing. It is assumed that the code will by default return "Ok" if it;s returning the models
+                //return models;
+
+                //The code below is more efficient and neater than the code above and for more use cases it will suffice.
+                return _mapper.Map<CampModel[]>(results);
             }
             catch (System.Exception)
             {
@@ -98,7 +113,6 @@ namespace CoreCodeCamp.Controllers
 
 
             //Status codes are good for informing the client and sometimes yourself when there is an issue.
-
             //You can use the "this." to load all available properties of status codes among other things
 
 
@@ -106,11 +120,62 @@ namespace CoreCodeCamp.Controllers
             //Code
             //return Ok(new { Moniker = "ATL2018", Name = "Atlanta Code Camp" });
 
-
-
             //Returning Ok is the status code.
-             
             //The code above literally says "return success after creating the new Moniker ATL2018 and Name Atlanta Code Camp"
         }
+
+        //The block of code below will be used in getting a single parameter 
+        [HttpGet("{moniker}")]
+        //The code above extends the route parameter declared on top of the api controller.
+        //To get the moniker in particular a "/" and the name of the moniker will be added after the route parameter above
+        
+        //Note that the name of the parameter in the "HttpGet" route should match what is below in the "Get" method.
+        //In this case its "{moniker}" and "(string moniker)" respectively
+
+        //Also note that you're to include the data type of the parameter you're looking for in the "Get" method, example is the "Get(string moniker)" below
+
+        public async Task<ActionResult<CampModel>> Get(string moniker)
+        {
+
+            try
+            {
+                var result = await _repository.GetCampAsync(moniker);
+
+                if (result == null) return NotFound();
+
+                return _mapper.Map<CampModel>(result);
+
+                //All the code in this block is similar to the above code, only it's mean't to return a single result. 
+            }
+            catch (System.Exception)
+            {
+
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+
+        }
+
+        //If moniker is an integer, you'll write
+        // [HttpGet("{moniker: int}")]
+        //public async Task<ActionResult<CampModel>> Get(int moniker)
+        //{
+
+        //    try
+        //    {
+        //        var result = await _repository.GetCampAsync(moniker);
+
+        //        if (result == null) return NotFound();
+
+        //        return _mapper.Map<CampModel>(result);
+
+        //        //All the code in this block is similar to the above code, only it's mean't to return a single result. 
+        //    }
+        //    catch (System.Exception)
+        //    {
+
+        //        return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+        //    }
+
+        //}
     }
 }
