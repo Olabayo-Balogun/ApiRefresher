@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using CoreCodeCamp.Data;
 using Microsoft.AspNetCore.Builder;
@@ -23,6 +24,11 @@ namespace CoreCodeCamp
         
      //this part helps us get our data from the database, the repository and the repository class goes hand in hand with the database context
       services.AddScoped<ICampRepository, CampRepository>();
+
+      //Automapper makes it easier to map to classes and the likes
+      //Once you specify where it should target it does the job
+      //You should ensure you use the line of code below as it summarily maps to all the created profiles
+     services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
      // this part references the resourves your're addind, you can add views to this place if you like however, since this project is strictly API, view won't be added
       services.AddControllers();

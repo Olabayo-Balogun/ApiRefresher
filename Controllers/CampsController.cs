@@ -1,7 +1,10 @@
 ﻿//The using statement below must be present when inheriting "ControllerBase" and using "Route" attributes.
 
 //It's important to remember this especially if you decide to use other code editor like VS Code for building APIs rather than an IDE like Visual Studio
+using AutoMapper;
 using CoreCodeCamp.Data;
+using CoreCodeCamp.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -24,6 +27,7 @@ namespace CoreCodeCamp.Controllers
     public class CampsController : ControllerBase
     {
         private readonly ICampRepository _repository;
+        private readonly IMapper _mapper;
 
         //The name of the method is very important in API.
 
@@ -37,9 +41,10 @@ namespace CoreCodeCamp.Controllers
 
         //when the url path specified in a browser matches the controller name (in this case it's "camps") it will return all the values within the controller (that have a return type) under normal circumstances.
 
-        public CampsController(ICampRepository repository)
+        public CampsController(ICampRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
 
             //When trying to get an instance of a repository you need to create a constructor for it and pass in the repository name and create a private readonly field for it.
 
@@ -60,21 +65,48 @@ namespace CoreCodeCamp.Controllers
 
             //What is found within this block of code starting from the HttpGet attribute is the endpoint
 
-            var results = await _repository.GetAllCampsAsync();
+
+            //Code
+            //var results = await _repository.GetAllCampsAsync();
+
+
 
             //When using an async properties, your action has to be an an async task of the action result
 
-           // You should also add "await" to the _respository so the async action will work as it should.
+            // You should also add "await" to the _respository so the async action will work as it should.
 
             //You can return the result of the variable which now possesses the what you called from the repository
 
-            if (false) return this.BadRequest("Bad stuff happens");
+            try
+            {
+                var results = await _repository.GetAllCampsAsync();
+
+                //Mapping the way it's done below gives you full access to the data in the model involved
+                //It also allows you to manipulate what you get
+                CampModel[] models = _mapper.Map<CampModel[]>(results);
+                return Ok(models);
+            }
+            catch (System.Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure" );
+            }
+            //The above return style in the "catch" is used when you want to return a status code that isn't naturally available, the style above exposes all the status codes available
+
+            // code
+            // if (false) return this.BadRequest("Bad stuff happens");
+
+
 
             //Status codes are good for informing the client and sometimes yourself when there is an issue.
 
             //You can use the "this." to load all available properties of status codes among other things
 
-            return Ok(new { Moniker = "ATL2018", Name = "Atlanta Code Camp" });
+
+
+            //Code
+            //return Ok(new { Moniker = "ATL2018", Name = "Atlanta Code Camp" });
+
+
 
             //Returning Ok is the status code.
              
