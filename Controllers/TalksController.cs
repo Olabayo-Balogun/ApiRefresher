@@ -100,5 +100,51 @@ namespace CoreCodeCamp.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Failed to get Talk");
             }
         }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<TalkModel>> Put(string moniker, int id, TalkModel model)
+        {
+            //Because the talk is linked to the camp you have to put in the particular camp moniker you want to update the talk for then the ID of the talk and finally the Model you're updating the data into 
+            try
+            {
+                var talk = await _repository.GetTalkByMonikerAsync(moniker, id, true);
+                //We had to add true so we can also display the speaker details as we might need to update that too.
+                if(talk == null)
+                {
+                    return NotFound("Couldn't find the talk");                   
+                }
+                _mapper.Map(model, talk);
+                //The mapper will map the details from the source which is the model into the talk entity
+
+                if (model.Speaker != null)
+                {
+                    var speaker = await _repository.GetSpeakerAsync(model.Speaker.SpeakerId);
+                    if (speaker != null)
+                    {
+                        talk.Speaker = speaker;
+                    }
+                }
+                //The above code allows us to update the details of the speaker if we want to.
+                //It comes after mapping but before saving so as to ignore the speaker during mapping (especially if the user isn't updating it) then we can add it if it's there (after the mapping) for saving in the code below.
+
+                if (await _repository.SaveChangesAsync())
+                {
+                    //The above if statement waits to confirm that the changes have been gotten
+                    return _mapper.Map<TalkModel>(talk);
+                    //The code just above does the saving
+                }
+                else
+                {
+                    return BadRequest("Failed to update database.");
+                }
+
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Failed to get Talk");
+            }
+        }
+
+       
     } 
 }

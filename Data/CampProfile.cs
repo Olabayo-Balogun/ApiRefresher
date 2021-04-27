@@ -36,12 +36,24 @@ namespace CoreCodeCamp.Data
                .ForMember(c => c.PostalCode, o => o.MapFrom(m => m.Location.PostalCode)).ReverseMap();
             this.CreateMap<Camp, CampModel>()
                .ForMember(c => c.Country, o => o.MapFrom(m => m.Location.Country)).ReverseMap();
+
+
             this.CreateMap<Talk, TalkModel>()
-              .ForMember(c => c.Title, o => o.MapFrom(m => m.Title)).ReverseMap();
+              .ForMember(c => c.Title, o => o.MapFrom(m => m.Title)).ReverseMap()
+              .ForMember(t => t.Camp, opt => opt.Ignore())
+              .ForMember(t => t.Speaker, opt => opt.Ignore());
             this.CreateMap<Talk, TalkModel>()
-              .ForMember(c => c.Abstract, o => o.MapFrom(m => m.Abstract)).ReverseMap();
+              .ForMember(c => c.Abstract, o => o.MapFrom(m => m.Abstract)).ReverseMap()
+              .ForMember(t => t.Camp, opt => opt.Ignore())
+              .ForMember(t => t.Speaker, opt => opt.Ignore());
             this.CreateMap<Talk, TalkModel>()
-              .ForMember(c => c.Level, o => o.MapFrom(m => m.Level)).ReverseMap();
+              .ForMember(c => c.Level, o => o.MapFrom(m => m.Level)).ReverseMap()
+              .ForMember(t => t.Camp, opt => opt.Ignore())
+              .ForMember(t => t.Speaker, opt => opt.Ignore());
+            //What the above ignore code does is that it ensures that the only data that is mapped and transferred between the Talk and the TalkModel is data that relates specifically to them.
+            //As a result of the fact that there is a relationship between Talk and both the Camp and the Speaker class, it is important that we ensure that the mapping ignores data from those classes
+
+
             this.CreateMap<Speaker, SpeakerModel>().ForMember(c => c.SpeakerId, o => o.MapFrom(m => m.SpeakerId)).ReverseMap();
             this.CreateMap<Speaker, SpeakerModel>().ForMember(c => c.FirstName, o => o.MapFrom(m => m.FirstName)).ReverseMap();
             this.CreateMap<Speaker, SpeakerModel>().ForMember(c => c.LastName, o => o.MapFrom(m => m.LastName)).ReverseMap();

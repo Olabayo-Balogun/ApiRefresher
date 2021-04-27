@@ -234,6 +234,7 @@ namespace CoreCodeCamp.Controllers
 
                 //Creating a new camp
                 var camp = _mapper.Map<Camp>(model);
+                //you have to create a variable that maps to the entity class you want to create new items in
                 _repository.Add(camp);
                 if(await _repository.SaveChangesAsync())
                 {
@@ -255,6 +256,7 @@ namespace CoreCodeCamp.Controllers
         [HttpPut("{moniker}")]
         public async Task<ActionResult<CampModel>> Put(string moniker, CampModel model)
         {
+            //The above code shows that the parameters you need are the key and the Model class of the item you need to change
             try
             {
                 var oldCamp = await _repository.GetCampAsync(moniker);
@@ -282,6 +284,7 @@ namespace CoreCodeCamp.Controllers
         [HttpDelete("{moniker}")]
         public async Task<IActionResult> Delete(string moniker)
         {
+            //To delete you only need the key for that object
             try
             {
                 var oldCamp = await _repository.GetCampAsync(moniker);
