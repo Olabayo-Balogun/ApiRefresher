@@ -7,6 +7,7 @@ using CoreCodeCamp.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -49,6 +50,19 @@ namespace CoreCodeCamp
 
                 //What the code below does is that it reports the version of the API by adding responses as the header of the result of running that api which will tell you the versions it supports.
                 opt.ReportApiVersions = true;
+
+
+                //The parameter "ver" will override the default "api-version" query string that you input when trying to specify the version you're calling.
+                //You can use this overriding parameter when you want to change the default version query string
+
+                //Code
+                //opt.ApiVersionReader = new QueryStringApiVersionReader("ver");
+
+                //This tries to figure out what version you want by reviewing your request and identifying the required version from some part of your request
+                //The query string parameter specifies the name of the header which we set to "X-Version"
+                //Header versioning isn't advisable for non-developers as it's complex
+                //Header versioning is done when developers are the target
+                opt.ApiVersionReader = new HeaderApiVersionReader("X-Version");
             });
 
      //You need to add the code below when dealing with versioning
