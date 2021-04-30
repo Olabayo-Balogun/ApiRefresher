@@ -71,7 +71,12 @@ namespace CoreCodeCamp
                 //You should only try to fetch the api using one versioning  type.
                 //If you use two versioning type with different versions and try to fetch like that you'll get errors.
                 //The below is saying you can use Header versioning or query string api versioning, don't try using both
-                opt.ApiVersionReader = ApiVersionReader.Combine(new HeaderApiVersionReader("X-Version", "Header-Version"), new QueryStringApiVersionReader("ver", "version", "api-version"));
+                //opt.ApiVersionReader = ApiVersionReader.Combine(new HeaderApiVersionReader("X-Version", "Header-Version"), new QueryStringApiVersionReader("ver", "version", "api-version"));
+
+                //The code below lets you use the URL versioning method
+                //Note that it is ill-advised that you use it
+                //It doesn't have options as the code basically tells the machine to assume that the version is going to be included in the URL
+                opt.ApiVersionReader = new UrlSegmentApiVersionReader();
             });
 
      //You need to add the code below when dealing with versioning

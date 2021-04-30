@@ -10,7 +10,10 @@ using System.Threading.Tasks;
 
 namespace CoreCodeCamp.Controllers
 {
-    [Route("api/camps")]
+    //[Route("api/camps")]
+
+    //This route below is only needed when you're using URL versioning method
+    [Route("api/v{version:apiVersion}/camps")]
 
     [ApiVersion("2.0")]
     [ApiController]

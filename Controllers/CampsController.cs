@@ -21,7 +21,13 @@ namespace CoreCodeCamp.Controllers
 
     //If you plan on using one of your projects as a template that will be recycled in scaffolding other projects then this will be an issue.
 
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
+
+    //The Routing attribute below must be used when using URL routing
+    //What the "version" keyword does is that it specifies the type of version to be expected in the URL
+    //The routing parameter doesn't change the controller, it only tells the machine/browser that you're deriving the controller from the route api specified (because there are controllers that are specific to particular api versions
+    //Another downside is that you have to use this routing parameter in every controller class that has versioning
+    [Route("api/v{version:apiVersion}/[controller]")]
 
     //What the two "ApiVersion" attributes below does is that it helps to declare the versions that are supported by the project.
     [ApiVersion("1.0")]
