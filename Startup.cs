@@ -89,6 +89,12 @@ namespace CoreCodeCamp
                 //    .HasApiVersion(new ApiVersion(1, 1))
                 //    .Action(c => c.Delete(default(string), default(int)))
                 //        .MapToApiVersion(1, 1);
+
+                //You can also use versioning by;
+                //Versioning by Namespaces
+                //Versioning by Content type
+                //Writing your own reader
+                //Writing your own resolver
             });
 
      //You need to add the code below when dealing with versioning
