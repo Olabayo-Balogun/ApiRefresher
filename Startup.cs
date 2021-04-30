@@ -30,9 +30,29 @@ namespace CoreCodeCamp
       //You should ensure you use the line of code below as it summarily maps to all the created profiles
      services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-     // this part references the resourves your're addind, you can add views to this place if you like however, since this project is strictly API, view won't be added
-      services.AddControllers();
-    }
+            //The code below helps us to version our api. You must have installed the "Microsoft.AspNetCore.MVC.Versioning" Nuget package to be able to use this feature.
+            //Do not download the AspNet version of the above package, AspNetCore version is better as it is more suited to .Net Core projects.
+
+            //Code
+            //services.AddApiVersioning();
+
+            //The code below sets the default version of the api as 1.1
+            //This means that when running the endpoint on the browser the version has to be specified as 1.1 (at the very least) or it will return an error.
+            //Usually, 1.0 is the default version (without you having to specify anything).
+            services.AddApiVersioning(opt =>
+            {
+                opt.DefaultApiVersion = new ApiVersion(1, 1);
+
+                //What the code below does is that it reports the version of the API by adding responses as the header of the result of running that api which will tell you the versions it supports.
+                opt.ReportApiVersions = true;
+            });
+
+     //You need to add the code below when dealing with versioning
+     services.AddMvc(opt => opt.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+     // this part references the resoucves your're adding, you can add views to this place if you like however, since this project is strictly API, view won't be added
+     services.AddControllers();
+    } 
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
