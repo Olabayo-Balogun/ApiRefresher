@@ -62,7 +62,16 @@ namespace CoreCodeCamp
                 //The query string parameter specifies the name of the header which we set to "X-Version"
                 //Header versioning isn't advisable for non-developers as it's complex
                 //Header versioning is done when developers are the target
-                opt.ApiVersionReader = new HeaderApiVersionReader("X-Version");
+                //Code
+                //opt.ApiVersionReader = new HeaderApiVersionReader("X-Version");
+
+                //The code below is used for combining different versioning types so the api responds to anyone of those versions.
+                //It is possible to specify multiple query parameters for each versioning type
+                //Adding a "," to the first query parameter lets you add more query parameters
+                //You should only try to fetch the api using one versioning  type.
+                //If you use two versioning type with different versions and try to fetch like that you'll get errors.
+                //The below is saying you can use Header versioning or query string api versioning, don't try using both
+                opt.ApiVersionReader = ApiVersionReader.Combine(new HeaderApiVersionReader("X-Version", "Header-Version"), new QueryStringApiVersionReader("ver", "version", "api-version"));
             });
 
      //You need to add the code below when dealing with versioning
