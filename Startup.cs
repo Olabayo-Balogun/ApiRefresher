@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using CoreCodeCamp.Controllers;
 using CoreCodeCamp.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -77,6 +79,16 @@ namespace CoreCodeCamp
                 //Note that it is ill-advised that you use it
                 //It doesn't have options as the code basically tells the machine to assume that the version is going to be included in the URL
                 opt.ApiVersionReader = new UrlSegmentApiVersionReader();
+
+                //The code below is version convention that is used to target controllers and implement version methods and actions for them
+                //The Action has helps in specifying which API responds to particular API versions
+                //I commented it out because it doesn't seem to build, I believe it's not so compatible with the .Net Core version I'm using
+                //Code
+                //opt.Conventions.Controller<TalksController>()
+                //    .HasApiVersion(new ApiVersion(1, 0))
+                //    .HasApiVersion(new ApiVersion(1, 1))
+                //    .Action(c => c.Delete(default(string), default(int)))
+                //        .MapToApiVersion(1, 1);
             });
 
      //You need to add the code below when dealing with versioning
