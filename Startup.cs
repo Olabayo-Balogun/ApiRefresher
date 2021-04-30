@@ -36,11 +36,15 @@ namespace CoreCodeCamp
             //Code
             //services.AddApiVersioning();
 
-            //The code below sets the default version of the api as 1.1
-            //This means that when running the endpoint on the browser the version has to be specified as 1.1 (at the very least) or it will return an error.
-            //Usually, 1.0 is the default version (without you having to specify anything).
+            //The code below helps you declare your version parameters better
             services.AddApiVersioning(opt =>
             {
+                //What the code below does is that it assumes a default version if you don't specify it yourself
+                opt.AssumeDefaultVersionWhenUnspecified = true;
+
+                //The code below sets the default version of the api as 1.1
+                //This means that when running the endpoint on the browser the version has to be specified as 1.1 (at the very least) or it will return an error.
+                //Usually, 1.0 is the default version (without you having to specify anything).
                 opt.DefaultApiVersion = new ApiVersion(1, 1);
 
                 //What the code below does is that it reports the version of the API by adding responses as the header of the result of running that api which will tell you the versions it supports.

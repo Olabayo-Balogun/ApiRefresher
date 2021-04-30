@@ -22,6 +22,10 @@ namespace CoreCodeCamp.Controllers
     //If you plan on using one of your projects as a template that will be recycled in scaffolding other projects then this will be an issue.
 
     [Route("api/[controller]")]
+
+    //What the two "ApiVersion" attributes below does is that it helps to declare the versions that are supported by the project.
+    [ApiVersion("1.0")]
+    [ApiVersion("1.1")]
     [ApiController]
 
     //Note that name of controllers should be in plural by convention
@@ -148,7 +152,8 @@ namespace CoreCodeCamp.Controllers
         //In this case its "{moniker}" and "(string moniker)" respectively
 
         //Also note that you're to include the data type of the parameter you're looking for in the "Get" method, example is the "Get(string moniker)" below
-
+        [MapToApiVersion("1.0")]
+        //What the "MapToApiVersion" code above does is that it declares which API version it'll respond to.
         public async Task<ActionResult<CampModel>> Get(string moniker)
         {
 
@@ -192,6 +197,32 @@ namespace CoreCodeCamp.Controllers
         //    }
 
         //}
+
+        //The code below is just like the code above, only it responds to API version 1.1
+        [HttpGet("{moniker}")]
+        [MapToApiVersion("1.1")]
+
+        //Also note that it is advisable to change the name of the "Get" method to the name of the version (without the "." in between the version number) as it helps to ensure the machine isn't confused.
+        public async Task<ActionResult<CampModel>> Get11(string moniker)
+        {
+
+            try
+            {
+                var result = await _repository.GetCampAsync(moniker, true);
+
+                if (result == null) return NotFound();
+
+                return _mapper.Map<CampModel>(result);
+
+                //All the code in this block is similar to the above code, only it's mean't to return a single result. 
+            }
+            catch (Exception)
+            {
+
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+
+        }
 
         [HttpGet("search")]
         public async Task<ActionResult<CampModel[]>> SearchByDate(DateTime theDate, bool includeTalks = false)
